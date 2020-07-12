@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dawi">
+
+	
+	<resultMap id="mapTema" type="temaBeanIbatis">
+		<id property="idTema" column="idtema" />
+		<result property="nombre" column="nombre" />
+	</resultMap>
+	
+	<resultMap id="mapLibro" type="libroBeanIbatis">
+		<id property="idLibro" column="idlibro" />
+		<result property="nombre" column="nombre" />
+		<result property="precio" column="precio" />
+		
+		<association property="tema" column="idTema"	select="SQL_llaveForaneaTema" />
+	</resultMap>
+
+	<select id="SQL_llaveForaneaTema" resultMap="mapTema" parameterType="int">
+		select * from tema where idtema = #{param}
+	</select>
+
+	
+	<select id="SQL_lista_tema" resultMap="mapTema">
+		select * from tema
+	</select>
+
+	<select id="SQL_lista_libro" resultMap="mapLibro"	parameterType="java.lang.String">
+		select * from libro where nombre like #{filtro}
+	</select>
+
+	
+
+	<delete id="SQL_elimina_Libro" parameterType="int">
+		delete from libro where idLibro = #{idLibro}
+	</delete>
+
+	
+
+	
+	
+
+
+	
+	
+
+	<select id="SQL_listaLibroPorFiltro" 
+					parameterType="filtroBeanIbatis" resultMap="mapLibro">
+		select * from libro	
+		<where>
+			
+			nombre like #{nombre}
+			
+			<if test="idDeporte != -1">
+					and idtema = #{idTema}
+			</if>
+			
+			
+			
+		</where>		
+	</select>
+	
+	<select id="SQL_listaLibroMultiple" 
+					parameterType="filtroBeanIbatis" resultMap="mapLibro">
+		select * from libro where idTema in
+			
+		<foreach open="(" close=")" separator="," collection="temas" item="x" >
+				${x}	
+		</foreach>
+		
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
